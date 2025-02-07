@@ -26,7 +26,7 @@ def epsilon_greedy(x, epsilon, arms):
     else:
         return i
 
-def multi_task(epsilon=0.1, max_iter=10000, tasks=500, arms=10, alpha=0.1):
+def multi_task(epsilon=0.1, max_iter=100, tasks=5, arms=10, alpha=0.1):
 
     rows, cols = tasks, arms
 
