@@ -98,6 +98,7 @@ rewards_avg /= runs
 optimal_action_count_avg /= runs
 
 # analysis
+
 fig1, axes1 = plt.subplots(2, 1, figsize = (10, 10))
 labels = ['Sample Average', 'Constant Step-Size (α=0.1)']
 colors = ['r', 'g']
