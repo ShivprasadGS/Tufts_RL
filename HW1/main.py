@@ -72,7 +72,7 @@ def run_experiment(bandit, agent, steps=10000):
 
 arms = 10
 steps = 10000
-runs = 100
+runs = 2000
 epsilon = 0.1
 alpha = 0.1
 rolling_window_size = 25
