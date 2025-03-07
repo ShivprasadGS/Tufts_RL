@@ -77,7 +77,7 @@ def build_track_c(save_map=False):
     track[-1, :6] = STARTING
 
     # end line
-    track[:6, -1] = ENDING
+    track[-1, 14:] = ENDING
 
     # save the track
     if save_map:
