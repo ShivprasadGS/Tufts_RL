@@ -14,11 +14,17 @@ class Racetrack(Env):
 
         self.size = size
 
-        assert track_map in ['a', 'b']
+        assert track_map in ['a', 'b', 'c']
         assert render_mode is None or render_mode in self.metadata['render_modes']
         self.render_mode = render_mode
 
-        filename = 'track_a.npy' if track_map == 'a' else 'track_b.npy'
+        if track_map == 'a':
+            filename = 'track_a.npy'
+        elif track_map == 'b':
+            filename = 'track_b.npy'
+        elif track_map == 'c':
+            filename = 'track_c.npy'
+
         with open('./racetrack_designs/' + filename, 'rb') as f:
             self.track_map = np.load(f)
 
@@ -33,7 +39,12 @@ class Racetrack(Env):
         # get the starting states
         self.start_states = np.dstack(np.where(self.track_map == STARTING))[0]
 
-        self.nS = (*self.track_map.shape, 5, 9)         # observation space
+        # observation space with negative + positive x & y velocity
+        self.nS = (*self.track_map.shape, 9, 9)
+        # observation space with negative + positive x velocity and positive y velocity
+        #self.nS = (*self.track_map.shape, 5, 9)
+        # observation space with only positive x & y velocity
+        #self.nS = (*self.track_map.shape, 5, 5)
         self.nA = 9                                     # action space
         self.state = None                               # initialize state
         self.speed = None                               # initialize speed
@@ -114,14 +125,33 @@ class Racetrack(Env):
         temp_y_acc = self.speed[0] + y_act
         temp_x_acc = self.speed[1] + x_act
 
+        # positive + negative y velocity
+        if temp_y_acc < -4:
+            temp_y_acc = -4
+        if temp_y_acc > 4:
+            temp_y_acc = 4
+
+        """
+        # positive y velocity
         if temp_y_acc < -4:
             temp_y_acc = -4
         if temp_y_acc > 0:
             temp_y_acc = 0
+        """
+
+        # positive + negative x velocity
         if temp_x_acc < -4:
             temp_x_acc = -4
         if temp_x_acc > 4:
             temp_x_acc = 4
+
+        """
+        # positive x velocity
+        if temp_x_acc < 0:
+            temp_x_acc = 0
+        if temp_x_acc > 4:
+            temp_x_acc = 4
+        """
 
         new_state[0] += temp_y_acc
         new_state[1] += temp_x_acc

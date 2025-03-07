@@ -152,7 +152,7 @@ def off_policy_monte_carlo(total_episodes: int,
 # run this script when this file is run
 if __name__ == '__main__':
 
-    train = False       # decides if we are in training phase
+    train = True                # decides if we are in training phase
     track_sel = 'a'
     total_episodes = 1_000_000
 

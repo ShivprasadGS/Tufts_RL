@@ -64,6 +64,28 @@ def build_track_b(save_map=False):
 
     return track
 
+# build racetrack 'c'
+def build_track_c(save_map=False):
+    track = np.ones(shape=(32, 20))
+
+    # out of the track values
+    track[9:, 6:14] = 0
+    track[8, 7:13] = 0
+    track[7, 8:12] = 0
+
+    # start line
+    track[-1, :6] = STARTING
+
+    # end line
+    track[:6, -1] = ENDING
+
+    # save the track
+    if save_map:
+        with open('./racetrack_designs/track_c.npy', 'wb') as f:
+            np.save(f, track)
+
+    return track
+
 # executes this when this file is called
 if __name__ == '__main__':
 
@@ -73,7 +95,7 @@ if __name__ == '__main__':
     plt.figure(figsize=(10, 10))
     plt.imshow(track_a_data)
     sns.heatmap(track_a_data, linewidths=1)
-    plt.savefig(f'./plots/track_a_design.png')
+    plt.savefig(f'./plots/design_track_a.png')
 
     track_b = build_track_b(save_map=True)
     with open('./racetrack_designs/track_b.npy', 'rb') as f:
@@ -81,7 +103,14 @@ if __name__ == '__main__':
     plt.figure(figsize=(10, 10))
     plt.imshow(track_b_data)
     sns.heatmap(track_b_data, linewidths=1)
-    plt.savefig(f'./plots/track_b_design.png')
+    plt.savefig(f'./plots/design_track_b.png')
 
+    track_c = build_track_c(save_map=True)
+    with open('./racetrack_designs/track_c.npy', 'rb') as f:
+        track_c_data = np.load(f)
+    plt.figure(figsize=(10, 10))
+    plt.imshow(track_c_data)
+    sns.heatmap(track_c_data, linewidths=1)
+    plt.savefig(f'./plots/design_track_c.png')
 
     plt.show()
