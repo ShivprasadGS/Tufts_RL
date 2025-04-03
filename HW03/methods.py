@@ -1,7 +1,9 @@
+import os
 import numpy as np
 import random
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
+
 
 class TabularDynaQ:
     def __init__(self, maze, params):
@@ -52,8 +54,7 @@ class TabularDynaQ:
                 action = self.choose_action(state, method)
                 new_state, reward = self.maze.take_action(state, action)
 
-                self.Q[state[0], state[1], action] += \
-                    self.params.alpha * (reward + self.params.gamma * np.max(self.Q[new_state[0], new_state[1], :])
+                self.Q[state[0], state[1], action] += self.params.alpha * (reward + self.params.gamma * np.max(self.Q[new_state[0], new_state[1], :])
                                          - self.Q[state[0], state[1], action])
 
                 self.model[state[0], state[1], action] = [new_state, reward]
@@ -120,6 +121,16 @@ class TabularDynaQ:
         for state in states:
             im = self.maze.print_maze(state)
             ims.append([im])
+
         anim = animation.ArtistAnimation(fig, ims, interval=100, blit=True, repeat_delay=0)
+
+        os.makedirs("./results", exist_ok=True)
+
+        if method == 'Dyna-Q':
+            anim.save("./results/animation-Dyana-Q.gif", writer="pillow", fps=10)
+        elif method == 'Dyna-Q+':
+            anim.save("./results/animation-Dyana-Q+.gif", writer="pillow", fps=10)
+        elif method == 'Modified-Dyna-Q+':
+            anim.save("./results/animation-Modified-Dyna-Q+.gif", writer="pillow", fps=10)
         plt.show()
 

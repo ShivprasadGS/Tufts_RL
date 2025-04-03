@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 class Maze:
     def __init__(self):
@@ -14,15 +15,23 @@ class Maze:
         self.START_STATE = 2
         self.GOAL_STATE = 3
 
+        pastel_palette = sns.color_palette("pastel", 10)
+        self.RGB_OBSTACLE = pastel_palette[2]
+        self.RGB_OK = pastel_palette[7]
+        self.RGB_START = pastel_palette[4]
+        self.RGB_GOAL = pastel_palette[3]
+        self.RGB_AGENT = (0.1, 0.1, 0.1)
+
+        self.state_to_color = {
+            self.OBSTACLE_STATE: self.RGB_OBSTACLE,
+            self.OK_STATE:       self.RGB_OK,
+            self.START_STATE:    self.RGB_START,
+            self.GOAL_STATE:     self.RGB_GOAL
+        }
+
         self.maze = []
         self.MAZE_HEIGHT = 0
         self.MAZE_WIDTH = 0
-
-        self.RGB_GREY = (.5, .5, .5)
-        self.RGB_GREEN = (.5, 1, 0)
-        self.RGB_RED = (1, 0, 0)
-        self.RGB_YELLOW = (1, 1, 0)
-        self.RGB_BLACK = (0, 0, 0)
 
         self.init_maze()
 
@@ -30,7 +39,7 @@ class Maze:
         self.maze = [[1, 1, 1, 1, 1, 1, 1, 1, 3],
                      [1, 1, 1, 1, 1, 1, 1, 1, 1],
                      [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                     [1, 0, 0, 0, 0, 0, 0, 0, 0],
+                     [0, 0, 0, 0, 0, 0, 0, 0, 1],
                      [1, 1, 1, 1, 1, 1, 1, 1, 1],
                      [1, 1, 1, 2, 1, 1, 1, 1, 1]]
 
@@ -42,7 +51,7 @@ class Maze:
         self.maze = [[1, 1, 1, 1, 1, 1, 1, 1, 3],
                      [1, 1, 1, 1, 1, 1, 1, 1, 1],
                      [1, 1, 1, 1, 1, 1, 1, 1, 1],
-                     [1, 0, 0, 0, 0, 0, 0, 0, 1],
+                     [1, 0, 0, 0, 0, 0, 0, 0, 0],
                      [1, 1, 1, 1, 1, 1, 1, 1, 1],
                      [1, 1, 1, 2, 1, 1, 1, 1, 1]]
 
@@ -61,7 +70,9 @@ class Maze:
             y = max(y - 1, 0)
         elif action == self.ACTION_RIGHT:
             y = min(y + 1, self.MAZE_WIDTH - 1)
+
         if self.maze[x][y] == self.OBSTACLE_STATE:
+            # Stay in the original state if it's an obstacle
             x, y = state
 
         if self.maze[x][y] == self.GOAL_STATE:
@@ -76,12 +87,20 @@ class Maze:
                 self.maze[i][j] == state_type]
 
     def print_maze(self, state=None):
-        maze_rgb = self.maze.copy()
-        maze_rgb = [[self.RGB_GREEN if s == self.OBSTACLE_STATE else self.RGB_GREY if s == self.OK_STATE else
-                    self.RGB_YELLOW if s == self.START_STATE else self.RGB_RED for s in row] for row in maze_rgb]
+        maze_rgb = [[self.state_to_color.get(s, self.RGB_OK)
+                     for s in row]
+                    for row in self.maze]
+
         if state is not None:
             x, y = state
-            maze_rgb[x][y] = self.RGB_BLACK
-        im = plt.imshow(maze_rgb, origin='lower', interpolation='none', animated=True)
-        plt.gca().invert_yaxis()
+            if 0 <= x < self.MAZE_HEIGHT and 0 <= y < self.MAZE_WIDTH:
+                maze_rgb[x][y] = self.RGB_AGENT
+
+        ax = plt.gca()
+        im = ax.imshow(maze_rgb, origin='upper', interpolation='none', animated=True)
+        ax.set_xticks(np.arange(-.5, self.MAZE_WIDTH, 1), minor=True)
+        ax.set_yticks(np.arange(-.5, self.MAZE_HEIGHT, 1), minor=True)
+        ax.grid(which="minor", color="white", linestyle='-', linewidth=1) # White grid lines
+        ax.tick_params(which="major", bottom=False, left=False, labelbottom=False, labelleft=False)
+
         return im

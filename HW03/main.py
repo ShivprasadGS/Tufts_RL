@@ -13,6 +13,10 @@ def show_results(results):
     plt.legend(loc='upper left')
     plt.xlabel('Time steps')
     plt.ylabel('Cumulative reward')
+    plt.title('Exercise 8.4: Blocking Maze')
+    plt.grid(True)
+    plt.savefig('./results/results.png')
+
 
 
 def gridworld_experiment():
@@ -38,6 +42,5 @@ def gridworld_experiment():
 
     show_results(results)
     plt.show()
-
 
 gridworld_experiment()
